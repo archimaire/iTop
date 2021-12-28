@@ -20,6 +20,7 @@ use CMDBObjectSet;
 use CMDBSource;
 use Combodo\iTop\Application\UI\Base\Component\DataTable\DataTableSettings;
 use Combodo\iTop\Application\UI\Base\Component\DataTable\DataTableUIBlockFactory;
+use Combodo\iTop\Application\UI\Base\Layout\Object\ObjectSmallDetails;
 use DBObjectSearch;
 use DBObjectSet;
 use DBSearch;
@@ -77,7 +78,7 @@ class AjaxRenderController
 				if (isset($aObject[$sAlias]) && !is_null($aObject[$sAlias])) {
 					$aObj[$sAlias."/_key_"] = $aObject[$sAlias]->GetKey();
 					$aObj[$sAlias."/_key_/raw"] = $aObject[$sAlias]->GetKey();
-					$aObj[$sAlias."/hyperlink"] = $aObject[$sAlias]->GetHyperlink();
+					$aObj[$sAlias."/hyperlink"] = $aObject[$sAlias]->GetHyperlink(null, true, null, true);
 					foreach ($aColumnsLoad[$sAlias] as $sAttCode) {
 						$aObj[$sAlias."/".$sAttCode] = $aObject[$sAlias]->GetAsHTML($sAttCode);
 						$bExcludeRawValue = false;
@@ -234,6 +235,29 @@ class AjaxRenderController
 	}
 
 	/**
+	 *
+	 * @throws \Exception
+	 */
+	public static function GetSmallDetails(AjaxPage $oPage)
+	{
+		$sClass = utils::ReadParam('obj_class', '', false, 'class');
+		$sObjectKey = utils::ReadParam('obj_key', 0, false);
+
+		if (is_numeric($sObjectKey))
+		{
+			$oObj = MetaModel::GetObject($sClass, $sObjectKey, false /* MustBeFound */);
+		}
+		else
+		{
+			$oObj = MetaModel::GetObjectByName($sClass, $sObjectKey, false /* MustBeFound */);
+		}
+		if($oObj !== null) {
+			$oObjSmallDetail = new ObjectSmallDetails($oObj);
+			$oPage->AddUiBlock($oObjSmallDetail);
+		}
+	}
+
+		/**
 	 * @param string $sFilter
 	 *
 	 * @return array

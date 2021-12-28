@@ -1268,7 +1268,7 @@ abstract class DBObject implements iDisplay
      * @throws \CoreException
      * @throws \DictExceptionMissingString
      */
-	public static function MakeHyperLink($sObjClass, $sObjKey, $sHtmlLabel = '', $sUrlMakerClass = null, $bWithNavigationContext = true, $bArchived = false, $bObsolete = false)
+	public static function MakeHyperLink($sObjClass, $sObjKey, $sHtmlLabel = '', $sUrlMakerClass = null, $bWithNavigationContext = true, $bArchived = false, $bObsolete = false, $bIgnorePreview = false)
 	{
 		if ($sObjKey <= 0) return '<em>'.Dict::S('UI:UndefinedObject').'</em>'; // Objects built in memory have negative IDs
 
@@ -1338,7 +1338,12 @@ abstract class DBObject implements iDisplay
 		{
 			$sHLink = $sIcon.$sHtmlLabel;
 		}
-		$sRet = "<span class=\"object-ref $sSpanClass\" title=\"$sHint\">$sHLink</span>";
+		$sPreview = '';
+		if(utils::ShouldDisplayObjectPreview($sObjClass) && $bIgnorePreview === false){
+			$sRemoveContentUrl = utils::GetAbsoluteUrlAppRoot()."/pages/ajax.render.php?operation=get_small_details&obj_key=$sObjKey&obj_class=$sObjClass";
+			$sPreview = "data-tooltip-content=\"$sRemoveContentUrl\" data-tooltip-is-remote=\"true\" data-tooltip-html-enabled=\"true\" data-tooltip-sanitizer-skipped=\"false\" data-tooltip-show-delay=\"500\" data-tooltip-theme=\"light\" data-tooltip-hide-delay=\"1000\" ";
+		}
+		$sRet = "<span class=\"object-ref $sSpanClass\" $sPreview title=\"$sHint\">$sHLink</span>";
 		return $sRet;
 	}
 
@@ -1357,7 +1362,7 @@ abstract class DBObject implements iDisplay
      * @throws CoreException
      * @throws DictExceptionMissingString
      */
-	public function GetHyperlink($sUrlMakerClass = null, $bWithNavigationContext = true, $sLabel = null)
+	public function GetHyperlink($sUrlMakerClass = null, $bWithNavigationContext = true, $sLabel = null, $bIgnorePreview = false)
 	{
 	    if($sLabel === null)
         {
@@ -1365,7 +1370,7 @@ abstract class DBObject implements iDisplay
         }
 		$bArchived = $this->IsArchived();
 		$bObsolete = $this->IsObsolete();
-		return self::MakeHyperLink(get_class($this), $this->GetKey(), $sLabel, $sUrlMakerClass, $bWithNavigationContext, $bArchived, $bObsolete);
+		return self::MakeHyperLink(get_class($this), $this->GetKey(), $sLabel, $sUrlMakerClass, $bWithNavigationContext, $bArchived, $bObsolete, $bIgnorePreview);
 	}
 
     /**

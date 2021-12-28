@@ -1,0 +1,30 @@
+{# @copyright   Copyright (C) 2010-2021 Combodo SARL #}
+{# @license     http://opensource.org/licenses/AGPL-3.0 #}
+
+<div class="ibo-object-small-details--container">
+    <div class="ibo-object-small-details--header">
+        {% if oUIBlock.GetObjectIcon() is not same as('') %}
+            <div class="ibo-object-small-details--image-container" style="background-image: url({{ oUIBlock.GetObjectIcon() }})">
+            </div>
+        {% endif %}
+        <div class="ibo-object-small-details--content">
+            <div class="ibo-object-small-details--friendlyname">{{ oUIBlock.GetObjectFriendlyName() }}</div>
+            {% if oUIBlock.GetStatusLabel() is not empty %}
+                <div class="ibo-object-small-details--status">
+                    <span class="ibo-object-details--status" data-role="ibo-object-details--status" data-status-code="{{ oUIBlock.GetStatusCode() }}">
+                        <span class="ibo-object-details--status-dot" data-role="ibo-object-details--status-dot" style="background-color: {{ oUIBlock.GetStatusColor() }};"></span>
+                        <span class="ibo-object-details--status-label" data-role="ibo-object-details--status-label">{{ oUIBlock.GetStatusLabel() }}</span>
+                    </span>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+        <div class="ibo-object-small-details--content--attributes">
+    {% for attcode,attval in oUIBlock.GetDisplayValues() %}
+        <div class="ibo-object-small-details--content--attribute ibo-field ibo-field-small">
+            <span class="ibo-object-small-details--content--attributes--code ibo-field--label">{{ attcode|raw }}</span>
+            <span class="ibo-object-small-details--content--attributes--value ibo-field--value">{{ attval|raw }}</span>
+        </div>
+    {% endfor %}
+    </div>
+</div>

@@ -1,0 +1,42 @@
+.ibo-object-small-details--containter{
+  display: flex;
+  flex-direction: column;
+}
+.ibo-object-small-details--header{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.ibo-object-small-details--image-container {
+  margin: 10px 16px 10px 10px;
+  border-radius: $ibo-border-radius-full;
+  background-color: $ibo-color-grey-200;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+  height: $ibo-class-icon--large--size;
+  width: $ibo-class-icon--large--size;  
+  min-height: $ibo-class-icon--large--size;
+  min-width: $ibo-class-icon--large--size;
+
+}
+.ibo-object-small-details--friendlyname{
+  @extend %ibo-font-ral-sembol-200
+}
+.ibo-object-small-details--content--attributes {
+  display: table;
+
+  .ibo-object-small-details--content--attribute {
+    .ibo-object-mall-details--content--attributes--code, .ibo-object-small-details--content--attributes--value {
+      display: table-cell;
+    }
+
+    & ~ .ibo-object-small-details--content--attribute {
+      margin-top: 8px;
+    }
+  }
+}
+.ibo-object-small-details--content--attributes--code{
+  padding-right: 12px;
+  @extend .ibo-font-ral-bol-150;
+}

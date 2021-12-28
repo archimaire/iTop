@@ -110,6 +110,7 @@ function DisplayPreferences($oP)
 	$oMiscOptionsFieldset = FieldSetUIBlockFactory::MakeStandard(Dict::S('UI:FavoriteOtherSettings'), 'ibo-fieldset-for-misc-options');
 	$oSecondColumn->AddSubBlock($oMiscOptionsFieldset);
 	$oMiscOptionsFieldset->AddSubBlock(GetObsoleteDataFieldBlock());
+	$oMiscOptionsFieldset->AddSubBlock(GetObjectPreviewFieldBlock());
 
 	$oP->add_script(
 		<<<JS
@@ -671,6 +672,33 @@ HTML;
 	return new Html($sHtml);
 }
 
+
+/**
+ * @return \Combodo\iTop\Application\UI\Base\iUIBlock
+ * @throws \CoreException
+ * @throws \CoreUnexpectedValue
+ * @throws \MySQLException
+ * @since 3.0.0
+ */
+function GetObjectPreviewFieldBlock(): iUIBlock
+{
+	$bShow = appUserPreferences::GetPref('show_object_preview', true);
+	$sSelectedForHtmlAttribute = $bShow ? ' checked="checked"' : '';
+
+	$sLabel = Dict::S('UI:Favorites:ShowObjectPreview');
+	$sLabelDescription = Dict::S('UI:Favorites:ShowObjectPreview+');
+	$sHtml = <<<HTML
+<p>
+	<label data-tooltip-content="{$sLabelDescription}">
+		<span>{$sLabel}</span>
+		<input type="checkbox" name="show_object_preview" value="1"{$sSelectedForHtmlAttribute}>
+	</label>
+</p>
+HTML;
+
+	return new Html($sHtml);
+}
+
 /////////////////////////////////////////////////////////////////////////////
 //
 // Main program
@@ -763,6 +791,9 @@ try {
 				// - Obsolete data
 				$bShowObsoleteData = (bool)utils::ReadParam('show_obsolete_data', 0);
 				appUserPreferences::SetPref('show_obsolete_data', $bShowObsoleteData);
+				// - Object preview
+				$bShowOObjectPreview = (bool)utils::ReadParam('show_object_preview', 0);
+				appUserPreferences::SetPref('show_object_preview', $bShowOObjectPreview);
 
 				// Redirect to force a reload/display of the page in case language has been changed
 				$oAppContext = new ApplicationContext();

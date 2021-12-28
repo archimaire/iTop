@@ -7781,6 +7781,7 @@ MetaModel::RegisterZList("noneditable", array("description" => "non editable fie
 MetaModel::RegisterZList("details", array("description" => "All attributes to be displayed for the 'details' of an object", "type" => "attributes"));
 MetaModel::RegisterZList("list", array("description" => "All attributes to be displayed for a list of objects", "type" => "attributes"));
 MetaModel::RegisterZList("preview", array("description" => "All attributes visible in preview mode", "type" => "attributes"));
+MetaModel::RegisterZList("small_details", array("description" => "All attributes to be displayed for the 'details preview' of an object", "type" => "attributes"));
 
 MetaModel::RegisterZList("standard_search", array("description" => "List of criteria for the standard search", "type" => "filters"));
 MetaModel::RegisterZList("advanced_search", array("description" => "List of criteria for the advanced search", "type" => "filters"));

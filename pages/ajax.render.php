@@ -2655,6 +2655,16 @@ EOF
 			$oAjaxRenderController->GetMenusCount($oPage);
 			break;
 
+
+		//--------------------------------
+		// Hover card
+		//--------------------------------
+		case 'get_small_details':
+
+			$oAjaxRenderController->GetSmallDetails($oPage);
+			break;
+
+
 		default:
 			$oPage->p("Invalid query.");
 	}
