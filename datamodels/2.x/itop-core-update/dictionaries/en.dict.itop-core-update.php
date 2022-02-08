@@ -54,7 +54,7 @@ Dict::Add('EN US', 'English', 'English', array(
 
     'iTopUpdate:UI:Status' => 'Status',
     'iTopUpdate:UI:Action' => 'Update',
-    'iTopUpdate:UI:Setup' => 'iTop Setup',
+    'iTopUpdate:UI:Setup' => ITOP_APPLICATION_SHORT.' Setup',
     'iTopUpdate:UI:History' => 'Versions History',
     'iTopUpdate:UI:Progress' => 'Progress of the upgrade',
 
@@ -78,8 +78,8 @@ Dict::Add('EN US', 'English', 'English', array(
 	'iTopUpdate:UI:CanCoreUpdate:Warning' => 'Warning: application update can fail: %1$s',
 	'iTopUpdate:UI:CannotUpdateUseSetup' => 'You must use the <a href="%1$s">setup</a> to update the application.<br />Some modified files were detected, a partial update cannot be executed.',
 
-	'iTopUpdate:UI:SetupLaunch' => 'Launch iTop Setup',
-	'iTopUpdate:UI:SetupLaunchConfirm' => 'This will launch iTop setup, are you sure ?',
+	'iTopUpdate:UI:SetupLaunch' => 'Launch '.ITOP_APPLICATION_SHORT.' Setup',
+	'iTopUpdate:UI:SetupLaunchConfirm' => 'This will launch '.ITOP_APPLICATION_SHORT.' setup, are you sure ?',
 
 	// Setup Messages
     'iTopUpdate:UI:SetupMessage:Ready' => 'Ready to start',
