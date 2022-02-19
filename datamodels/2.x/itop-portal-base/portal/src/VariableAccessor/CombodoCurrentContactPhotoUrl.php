@@ -20,10 +20,10 @@
 namespace Combodo\iTop\Portal\VariableAccessor;
 
 
+use Combodo\iTop\Portal\EventListener\UserProvider;
 use Exception;
 use MetaModel;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use User;
 use UserRights;
 
 /**
@@ -35,8 +35,6 @@ use UserRights;
  */
 class CombodoCurrentContactPhotoUrl
 {
-	/** @var \User $oUser */
-	private $oUser;
 	/** @var string $sCombodoPortalBaseAbsoluteUrl */
 	private $sCombodoPortalBaseAbsoluteUrl;
 	/** @var string|null $sContactPhotoUrl */
@@ -44,16 +42,17 @@ class CombodoCurrentContactPhotoUrl
 	/** @var \Symfony\Component\DependencyInjection\ContainerInterface */
 	private $oContainer;
 
+	private $oUserProvider;
+
 	/**
 	 * CombodoCurrentContactPhotoUrl constructor.
 	 *
-	 * @param \User                                                     $oUser
 	 * @param \Symfony\Component\DependencyInjection\ContainerInterface $oContainer
 	 * @param string                                                    $sCombodoPortalBaseAbsoluteUrl
 	 */
-	public function __construct(User $oUser, ContainerInterface $oContainer, $sCombodoPortalBaseAbsoluteUrl)
+	public function __construct(UserProvider $userProvider, ContainerInterface $oContainer, $sCombodoPortalBaseAbsoluteUrl)
 	{
-		$this->oUser = $oUser;
+		$this->oUserProvider = $userProvider;
 		$this->oContainer = $oContainer;
 		$this->sCombodoPortalBaseAbsoluteUrl = $sCombodoPortalBaseAbsoluteUrl;
 		$this->sContactPhotoUrl = null;
@@ -91,7 +90,8 @@ class CombodoCurrentContactPhotoUrl
 		}
 		catch (Exception $e)
 		{
-			$oAllowedOrgSet = $this->oUser->Get('allowed_org_list');
+			$oUser = $this->oUserProvider->getCurrentUser();
+			$oAllowedOrgSet = $oUser->Get('allowed_org_list');
 			if ($oAllowedOrgSet->Count() > 0)
 			{
 				throw new Exception('Could not load contact related to connected user. (Tip: Make sure the contact\'s organization is among the user\'s allowed organizations)');

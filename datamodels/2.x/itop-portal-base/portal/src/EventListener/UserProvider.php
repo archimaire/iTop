@@ -44,6 +44,8 @@ class UserProvider implements ContainerAwareInterface
 	private $sPortalId;
 	/** @var \Symfony\Component\DependencyInjection\ContainerInterface $container */
 	private $oContainer;
+    /** @var \User $oUser */
+	private $oUser;
 
 	/**
 	 * UserProvider constructor.
@@ -84,12 +86,11 @@ class UserProvider implements ContainerAwareInterface
 		}
 
 		// User
-		$oUser = UserRights::GetUserObject();
-		if ($oUser === null)
+		$this->oUser = UserRights::GetUserObject();
+		if ($this->oUser === null)
 		{
 			throw new Exception('Could not load connected user.');
 		}
-		$this->oContainer->set('combodo.current_user', $oUser);
 
 		// Allowed portals
 		$aAllowedPortals = UserRights::GetAllowedPortals();
@@ -110,6 +111,15 @@ class UserProvider implements ContainerAwareInterface
 		}
 		/** @noinspection PhpParamsInspection It's an array and it's gonna stay that way */
 		$this->oContainer->set('combodo.current_user.allowed_portals', $aAllowedPortals);
+	}
+
+	/**
+	 * Get current user.
+	 *
+	 * @return \User
+	 */
+	public function getCurrentUser(){
+		return $this->oUser;
 	}
 
 	/**

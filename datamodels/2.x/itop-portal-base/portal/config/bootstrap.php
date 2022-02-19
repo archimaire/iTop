@@ -21,7 +21,7 @@
 // Disable PhpUnhandledExceptionInspection as the exception handling is made by the file including this one
 /** @noinspection PhpUnhandledExceptionInspection */
 
-use Symfony\Component\Debug\Debug;
+use Symfony\Component\ErrorHandler\Debug;
 use Symfony\Component\Dotenv\Dotenv;
 
 // Global autoloader (portal autoloader is already required through module.itop-portal-base.php)
@@ -54,7 +54,7 @@ elseif (!class_exists(Dotenv::class))
 else
 {
 	$sPath = dirname(__DIR__).'/.env';
-	$oDotenv = new Dotenv();
+	$oDotenv = new Dotenv(true);
 
 	// load all the .env files
 	if (method_exists($oDotenv, 'loadEnv'))
