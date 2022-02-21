@@ -29,7 +29,6 @@ class UrlGeneratorPass implements CompilerPassInterface
 		$definition = $container->getDefinition('router.default');
 		$options = $definition->getArgument(2);
 		$options['generator_class'] = UrlGenerator::class;
-		$options['generator_base_class'] = UrlGenerator::class;
 		$definition->setArgument(2, $options);
 
 		$container->setDefinition('router.default', $definition);

@@ -19,6 +19,10 @@
 
 namespace Combodo\iTop\Portal\Routing;
 
+use Psr\Log\LoggerInterface;
+use Symfony\Component\Routing\Generator\CompiledUrlGenerator;
+use Symfony\Component\Routing\RequestContext;
+use Symfony\Component\Routing\RouteCollection;
 use utils;
 use Symfony\Component\Routing\Generator\UrlGenerator as BaseUrlGenerator;
 
@@ -30,8 +34,9 @@ use Symfony\Component\Routing\Generator\UrlGenerator as BaseUrlGenerator;
  * @author  Bruno Da Silva <bruno.dasilva@combodo.com>
  * @author  Guillaume Lajarige <guillaume.lajarige@combodo.com>
  */
-class UrlGenerator extends BaseUrlGenerator
+class UrlGenerator extends CompiledUrlGenerator
 {
+
 	/** @noinspection PhpTooManyParametersInspection */
 	/**
 	 * Overloading of the parent function to add the $_REQUEST parameters to the url parameters.

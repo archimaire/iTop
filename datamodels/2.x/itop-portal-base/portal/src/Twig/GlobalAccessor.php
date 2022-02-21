@@ -33,11 +33,10 @@ class GlobalAccessor extends AbstractExtension implements GlobalsInterface
 		$this->userProvider = $userProvider;
 	}
 
-	public function getGlobals() {
+	public function getGlobals() : array
+	{
 		$data = array();
-
-		$data['user'] = "benji";
-		$data['menu'] = "mon menu";
+		$data['allowed_portals'] = $this->userProvider->getAllowedPortals();
 
 		return $data;
 	}

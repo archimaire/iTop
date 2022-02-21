@@ -46,6 +46,8 @@ class UserProvider implements ContainerAwareInterface
 	private $oContainer;
     /** @var \User $oUser */
 	private $oUser;
+	/** @var array $aAllowedPortals */
+	private $aAllowedPortals;
 
 	/**
 	 * UserProvider constructor.
@@ -109,17 +111,26 @@ class UserProvider implements ContainerAwareInterface
 		{
 			throw new HttpException(Response::HTTP_NOT_FOUND);
 		}
-		/** @noinspection PhpParamsInspection It's an array and it's gonna stay that way */
-		$this->oContainer->set('combodo.current_user.allowed_portals', $aAllowedPortals);
+
+		$this->aAllowedPortals = $aAllowedPortals;
 	}
 
 	/**
 	 * Get current user.
 	 *
-	 * @return \User
+	 * @return \User current user
 	 */
 	public function getCurrentUser(){
 		return $this->oUser;
+	}
+
+	/**
+	 * Get allowed portals.
+	 *
+	 * @return array allowed portals
+	 */
+	public function getAllowedPortals(){
+		return $this->aAllowedPortals;
 	}
 
 	/**
