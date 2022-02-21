@@ -44,7 +44,7 @@ class AggregatePageBrickController extends BrickController
 	 *
 	 * @return \Symfony\Component\HttpFoundation\Response
 	 *
-	 * @throws \Combodo\iTop\Portal\Brick\BrickNotFoundException
+	 * @throws BrickNotFoundException
 	 * @throws \Exception
 	 */
 	public function DisplayAction(Request $oRequest, $sBrickId)

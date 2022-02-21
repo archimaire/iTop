@@ -25,6 +25,8 @@ if (!defined('APPROOT'))
 }
 require_once APPROOT.'lib/autoload.php';
 
+require_once APPROOT.'application/startup.inc.php';
+
 if (!class_exists(Application::class))
 {
 	throw new RuntimeException('You need to add "symfony/framework-bundle" as a Composer dependency.');

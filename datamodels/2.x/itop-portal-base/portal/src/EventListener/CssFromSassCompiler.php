@@ -19,7 +19,7 @@
 
 namespace Combodo\iTop\Portal\EventListener;
 
-use Symfony\Component\HttpKernel\Event\GetResponseEvent;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
 use utils;
 
 /**
@@ -47,9 +47,9 @@ class CssFromSassCompiler
 	}
 
 	/**
-	 * @param \Symfony\Component\HttpKernel\Event\GetResponseEvent $oGetResponseEvent
+	 * @param RequestEvent $oRequestEvent
 	 */
-	public function onKernelRequest(GetResponseEvent $oGetResponseEvent)
+	public function onKernelRequest(RequestEvent $oRequestEvent)
 	{
 		// Force compilation need only when by-passing cache to limit server load.
 		if (isset($_SERVER['HTTP_CACHE_CONTROL']) && ($_SERVER['HTTP_CACHE_CONTROL'] !== 'no-cache'))

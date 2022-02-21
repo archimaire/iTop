@@ -24,13 +24,12 @@ namespace Combodo\iTop\Portal\EventListener;
 
 use Dict;
 use ExceptionLog;
-use IssueLog;
-use Symfony\Component\Debug\Exception\FlattenException;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\ErrorHandler\Exception\FlattenException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
+use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 
 /**
@@ -52,10 +51,10 @@ class ExceptionListener implements ContainerAwareInterface
 	 * @throws \Twig\Error\RuntimeError
 	 * @throws \Twig\Error\SyntaxError
 	 */
-	public function onKernelException(GetResponseForExceptionEvent $oEvent)
+	public function onKernelException(ExceptionEvent $oEvent)
 	{
 		// Get the exception object from the received event
-		$oException = $oEvent->getException();
+		$oException = $oEvent->getThrowable();
 
 		// Prepare / format exception data
 		if ($oException instanceof \MySQLException) {

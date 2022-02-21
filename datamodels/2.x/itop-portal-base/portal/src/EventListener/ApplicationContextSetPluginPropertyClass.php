@@ -20,7 +20,7 @@
 namespace Combodo\iTop\Portal\EventListener;
 
 use ApplicationContext;
-use Symfony\Component\HttpKernel\Event\GetResponseEvent;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
 use UserRights;
 use utils;
 
@@ -34,9 +34,9 @@ use utils;
 class ApplicationContextSetPluginPropertyClass
 {
 	/**
-	 * @param \Symfony\Component\HttpKernel\Event\GetResponseEvent $oGetResponseEvent
+	 * @param RequestEvent $oRequestEvent
 	 */
-    public function onKernelRequest(GetResponseEvent $oGetResponseEvent)
+    public function onKernelRequest(RequestEvent $oRequestEvent)
     {
 	    // Enable archived data
 	    utils::InitArchiveMode();

@@ -26,7 +26,7 @@ use ModuleDesign;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Event\GetResponseEvent;
+use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use UserRights;
 
@@ -60,11 +60,11 @@ class UserProvider implements ContainerAwareInterface
 	}
 
 	/**
-	 * @param \Symfony\Component\HttpKernel\Event\GetResponseEvent $oGetResponseEvent
+	 * @param RequestEvent $oRequestEvent
 	 *
 	 * @throws \Exception
 	 */
-	public function onKernelRequest(GetResponseEvent $oGetResponseEvent)
+	public function onKernelRequest(RequestEvent $oRequestEvent)
 	{
 		// User pre-checks
 		// Note: The following note and handling of the $iExitMethod were for the old login mechanism
@@ -73,7 +73,7 @@ class UserProvider implements ContainerAwareInterface
 		//
 		// Note: At this point the Exception handler is not registered, so we can't use $oApp::abort() method, hence the die().
 		// - Checking user rights and prompt if needed (401 HTTP code returned if XHR request)
-		$iExitMethod = ($oGetResponseEvent->getRequest()->isXmlHttpRequest()) ? LoginWebPage::EXIT_RETURN : LoginWebPage::EXIT_PROMPT;
+		$iExitMethod = ($oRequestEvent->getRequest()->isXmlHttpRequest()) ? LoginWebPage::EXIT_RETURN : LoginWebPage::EXIT_PROMPT;
 		$iLogonRes = LoginWebPage::DoLoginEx($this->sPortalId, false, $iExitMethod);
 		if( ($iExitMethod === LoginWebPage::EXIT_RETURN) && ($iLogonRes != 0) )
 		{
