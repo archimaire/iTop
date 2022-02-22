@@ -77,7 +77,7 @@ class ExceptionListener implements ContainerAwareInterface
 		}
 
 		// Prepare flatten exception
-		$oFlattenException = ($_SERVER['APP_DEBUG'] == 1) ? FlattenException::create($oException) : null;
+		$oFlattenException = ($_SERVER['APP_DEBUG'] == 1) ? FlattenException::createFromThrowable($oException) : null;
 		// Remove APPROOT from file paths if in production (SF context)
 		if (!is_null($oFlattenException) && ($_SERVER['APP_ENV'] === 'prod'))
 		{
