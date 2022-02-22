@@ -83,6 +83,10 @@ services:
   # Add more service definitions when explicit configuration is needed
   # Please note that last definitions always *replace* previous ones
 
+  Combodo\iTop\Portal\Routing\UrlGenerator:
+    decorates: 'router'
+    arguments: ['@Combodo\iTop\Portal\Routing\UrlGenerator.inner']
+
   # Legacy code as a service: since it is not in the auto-wiring path, it needs to be explicitly declared
   ModuleDesign:
     public: true

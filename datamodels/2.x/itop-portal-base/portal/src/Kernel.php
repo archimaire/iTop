@@ -19,7 +19,6 @@
 
 namespace Combodo\iTop\Portal;
 
-use Combodo\iTop\Portal\Routing\UrlGeneratorPass;
 use DeprecatedCallsLog;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Component\Config\Loader\LoaderInterface;
@@ -124,11 +123,4 @@ class Kernel extends BaseKernel
 		// TODO: Implement isClassInActiveBundle() method.
 	}
 
-	protected function buildContainer()
-	{
-		$container = parent::buildContainer();
-		$container->addCompilerPass(new UrlGeneratorPass());
-
-		return $container;
-	}
 }

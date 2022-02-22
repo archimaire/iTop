@@ -19,12 +19,9 @@
 
 namespace Combodo\iTop\Portal\Routing;
 
-use Psr\Log\LoggerInterface;
-use Symfony\Component\Routing\Generator\CompiledUrlGenerator;
 use Symfony\Component\Routing\RequestContext;
-use Symfony\Component\Routing\RouteCollection;
+use Symfony\Component\Routing\RouterInterface;
 use utils;
-use Symfony\Component\Routing\Generator\UrlGenerator as BaseUrlGenerator;
 
 /**
  * Class UrlGenerator
@@ -34,33 +31,40 @@ use Symfony\Component\Routing\Generator\UrlGenerator as BaseUrlGenerator;
  * @author  Bruno Da Silva <bruno.dasilva@combodo.com>
  * @author  Guillaume Lajarige <guillaume.lajarige@combodo.com>
  */
-class UrlGenerator extends CompiledUrlGenerator
+class UrlGenerator implements RouterInterface
 {
+	private $router;
 
-	/** @noinspection PhpTooManyParametersInspection */
-	/**
-	 * Overloading of the parent function to add the $_REQUEST parameters to the url parameters.
-	 * This is used to keep additional parameters in the url, especially when portal is accessed from the /pages/exec.php
-	 *
-	 * Note: As of now, it only adds the exec_module/exec_page/portal_id/env_switch/debug parameters. Any other parameter will be ignored.
-	 *
-	 * @param       $variables
-	 * @param       $defaults
-	 * @param       $requirements
-	 * @param       $tokens
-	 * @param       $parameters
-	 * @param       $name
-	 * @param       $referenceType
-	 * @param       $hostTokens
-	 * @param array $requiredSchemes
-	 *
-	 * @return string
-	 */
-	protected function doGenerate($variables, $defaults, $requirements, $tokens, $parameters, $name, $referenceType, $hostTokens, array $requiredSchemes = array())
+	public function __construct(RouterInterface $router)
+	{
+		$this->router = $router;
+	}
+
+	public function generate($name, $parameters = [], $referenceType = self::ABSOLUTE_PATH)
 	{
 		$parameters = $this->getExtraParams($parameters);
 
-		return parent::doGenerate($variables, $defaults, $requirements, $tokens, $parameters, $name, $referenceType, $hostTokens, $requiredSchemes);
+		return $this->router->generate($name, $parameters,$referenceType);
+	}
+
+	public function setContext(RequestContext $context)
+	{
+		$this->router->setContext($context);
+	}
+
+	public function getContext()
+	{
+		return $this->router->getContext();
+	}
+
+	public function getRouteCollection()
+	{
+		return $this->router->getRouteCollection();
+	}
+
+	public function match($pathinfo)
+	{
+		return $this->router->match($pathinfo);
 	}
 
 	/**
