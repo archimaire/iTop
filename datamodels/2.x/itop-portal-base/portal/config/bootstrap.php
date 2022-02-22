@@ -43,9 +43,10 @@ if (!defined('MODULESROOT'))
 
 // Load cached env vars if the .env.local.php file exists
 // Run "composer dump-env prod" to create it (requires symfony/flex >=1.2)
-if (is_array($sEnv = @include dirname(__DIR__).'/.env.local.php'))
-{
-	$_ENV += $sEnv;
+if (file_exists(dirname(__DIR__).'/.env.local.php')) {
+	if (is_array($sEnv = @include dirname(__DIR__).'/.env.local.php')) {
+		$_ENV += $sEnv;
+	}
 }
 elseif (!class_exists(Dotenv::class))
 {
@@ -54,7 +55,8 @@ elseif (!class_exists(Dotenv::class))
 else
 {
 	$sPath = dirname(__DIR__).'/.env';
-	$oDotenv = new Dotenv(true);
+	$oDotenv = new Dotenv();
+	$oDotenv->usePutenv();
 
 	// load all the .env files
 	if (method_exists($oDotenv, 'loadEnv'))
