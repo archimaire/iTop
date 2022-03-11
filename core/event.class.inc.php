@@ -212,7 +212,8 @@ class EventIssue extends Event
 		MetaModel::Init_SetZListItems('details', array('date', 'message', 'userinfo', 'issue', 'impact', 'page', 'arguments_post', 'arguments_get', 'callstack', 'data')); // Attributes to be displayed for the complete details
 		MetaModel::Init_SetZListItems('list', array('date', 'userinfo', 'issue', 'impact')); // Attributes to be displayed for a list
 		// Search criteria
-//		MetaModel::Init_SetZListItems('standard_search', array('name')); // Criteria of the std search form
+		MetaModel::Init_SetZListItems('default_search', array('date', 'userinfo', 'issue', 'impact')); // Criteria of the std search form
+		MetaModel::Init_SetZListItems('standard_search', array('date', 'userinfo', 'issue', 'impact')); // Criteria of the std search form
 //		MetaModel::Init_SetZListItems('advanced_search', array('name')); // Criteria of the advanced search form
 	}
 
