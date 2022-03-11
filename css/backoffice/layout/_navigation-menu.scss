@@ -670,6 +670,11 @@ $ibo-navigation-menu--user-info--height--is-expanded: 100% !default;
 	justify-content: space-between;
 	align-items: center;
 }
+.ibo-navigation-menu--menu-node-label-blank-target:after{
+  @extend %fa-solid-base;
+  content: "\f35d";
+  margin-left: 10px;
+}
 .ibo-navigation-menu--menu-node-counter {
 	margin-left: $ibo-navigation-menu--menu-node-counter--margin-left;
 	padding: $ibo-navigation-menu--menu-node-counter--padding-y $ibo-navigation-menu--menu-node-counter--padding-x;
