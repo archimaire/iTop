@@ -8,6 +8,9 @@
 
 
 use Combodo\iTop\TwigExtension;
+use Twig\Environment;
+use Twig\Loader\ChainLoader;
+use Twig\Loader\FilesystemLoader;
 
 /**
  * Twig context for modules extending the login screen
@@ -220,10 +223,11 @@ class LoginTwigRenderer
 				$oExtensionLoader->setPaths($sTwigLoaderPath);
 				$aTwigLoaders[] = $oExtensionLoader;
 			}
+			/** @noinspection SlowArrayOperationsInLoopInspection */
 			$this->aPostedVars = array_merge($this->aPostedVars, $oLoginContext->GetPostedVars());
 		}
 
-		$oCoreLoader = new Twig_Loader_Filesystem(array(), APPROOT.'templates');
+		$oCoreLoader = new FilesystemLoader(array(), APPROOT.'templates');
 		$aCoreTemplatesPaths = array('login', 'login/password');
 		// Having this path declared after the plugins let the plugins replace the core templates
 		$oCoreLoader->setPaths($aCoreTemplatesPaths);
@@ -231,8 +235,8 @@ class LoginTwigRenderer
 		$oCoreLoader->setPaths($aCoreTemplatesPaths, 'ItopCore');
 		$aTwigLoaders[] = $oCoreLoader;
 
-		$oLoader = new Twig_Loader_Chain($aTwigLoaders);
-		$this->oTwig = new Twig_Environment($oLoader);
+		$oLoader = new ChainLoader($aTwigLoaders);
+		$this->oTwig = new Environment($oLoader);
 		TwigExtension::RegisterTwigExtensions($this->oTwig);
 	}
 
@@ -311,9 +315,6 @@ class LoginTwigRenderer
 		return $this->aPostedVars;
 	}
 
-	/**
-	 * @return \Twig_Environment
-	 */
 	public function GetTwig()
 	{
 		return $this->oTwig;
