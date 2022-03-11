@@ -13,9 +13,12 @@ namespace Symfony\Component\Cache;
 
 use Doctrine\Common\Cache\CacheProvider;
 use Psr\Cache\CacheItemPoolInterface;
+use Symfony\Contracts\Service\ResetInterface;
 
 /**
  * @author Nicolas Grekas <p@tchwork.com>
+ *
+ * @deprecated Use Doctrine\Common\Cache\Psr6\DoctrineProvider instead
  */
 class DoctrineProvider extends CacheProvider implements PruneableInterface, ResettableInterface
 {
@@ -23,6 +26,8 @@ class DoctrineProvider extends CacheProvider implements PruneableInterface, Rese
 
     public function __construct(CacheItemPoolInterface $pool)
     {
+        trigger_deprecation('symfony/cache', '5.4', '"%s" is deprecated, use "Doctrine\Common\Cache\Psr6\DoctrineProvider" instead.', __CLASS__);
+
         $this->pool = $pool;
     }
 
@@ -39,7 +44,7 @@ class DoctrineProvider extends CacheProvider implements PruneableInterface, Rese
      */
     public function reset()
     {
-        if ($this->pool instanceof ResettableInterface) {
+        if ($this->pool instanceof ResetInterface) {
             $this->pool->reset();
         }
         $this->setNamespace($this->getNamespace());
@@ -47,6 +52,8 @@ class DoctrineProvider extends CacheProvider implements PruneableInterface, Rese
 
     /**
      * {@inheritdoc}
+     *
+     * @return mixed
      */
     protected function doFetch($id)
     {
@@ -57,6 +64,8 @@ class DoctrineProvider extends CacheProvider implements PruneableInterface, Rese
 
     /**
      * {@inheritdoc}
+     *
+     * @return bool
      */
     protected function doContains($id)
     {
@@ -65,6 +74,8 @@ class DoctrineProvider extends CacheProvider implements PruneableInterface, Rese
 
     /**
      * {@inheritdoc}
+     *
+     * @return bool
      */
     protected function doSave($id, $data, $lifeTime = 0)
     {
@@ -79,6 +90,8 @@ class DoctrineProvider extends CacheProvider implements PruneableInterface, Rese
 
     /**
      * {@inheritdoc}
+     *
+     * @return bool
      */
     protected function doDelete($id)
     {
@@ -87,6 +100,8 @@ class DoctrineProvider extends CacheProvider implements PruneableInterface, Rese
 
     /**
      * {@inheritdoc}
+     *
+     * @return bool
      */
     protected function doFlush()
     {
@@ -95,6 +110,8 @@ class DoctrineProvider extends CacheProvider implements PruneableInterface, Rese
 
     /**
      * {@inheritdoc}
+     *
+     * @return array|null
      */
     protected function doGetStats()
     {
