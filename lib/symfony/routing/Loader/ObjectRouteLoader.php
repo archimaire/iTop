@@ -20,7 +20,7 @@ use Symfony\Component\Routing\RouteCollection;
  *
  * @author Ryan Weaver <ryan@knpuniversity.com>
  */
-abstract class ObjectRouteLoader extends Loader
+abstract class ObjectLoader extends Loader
 {
     /**
      * Returns the object that the method will be called on to load routes.
@@ -28,60 +28,49 @@ abstract class ObjectRouteLoader extends Loader
      * For example, if your application uses a service container,
      * the $id may be a service id.
      *
-     * @param string $id
-     *
      * @return object
      */
-    abstract protected function getServiceObject($id);
+    abstract protected function getObject(string $id);
 
     /**
-     * Calls the service that will load the routes.
+     * Calls the object method that will load the routes.
      *
-     * @param mixed       $resource Some value that will resolve to a callable
+     * @param string      $resource object_id::method
      * @param string|null $type     The resource type
      *
      * @return RouteCollection
      */
-    public function load($resource, $type = null)
+    public function load($resource, string $type = null)
     {
-        $parts = explode(':', $resource);
-        if (2 != \count($parts)) {
-            throw new \InvalidArgumentException(sprintf('Invalid resource "%s" passed to the "service" route loader: use the format "service_name:methodName".', $resource));
+        if (!preg_match('/^[^\:]+(?:::(?:[^\:]+))?$/', $resource)) {
+            throw new \InvalidArgumentException(sprintf('Invalid resource "%s" passed to the %s route loader: use the format "object_id::method" or "object_id" if your object class has an "__invoke" method.', $resource, \is_string($type) ? '"'.$type.'"' : 'object'));
         }
 
-        $serviceString = $parts[0];
-        $method = $parts[1];
+        $parts = explode('::', $resource);
+        $method = $parts[1] ?? '__invoke';
 
-        $loaderObject = $this->getServiceObject($serviceString);
+        $loaderObject = $this->getObject($parts[0]);
 
         if (!\is_object($loaderObject)) {
-            throw new \LogicException(sprintf('"%s:getServiceObject()" must return an object: "%s" returned.', static::class, \gettype($loaderObject)));
+            throw new \TypeError(sprintf('"%s:getObject()" must return an object: "%s" returned.', static::class, get_debug_type($loaderObject)));
         }
 
-        if (!method_exists($loaderObject, $method)) {
-            throw new \BadMethodCallException(sprintf('Method "%s" not found on "%s" when importing routing resource "%s".', $method, \get_class($loaderObject), $resource));
+        if (!\is_callable([$loaderObject, $method])) {
+            throw new \BadMethodCallException(sprintf('Method "%s" not found on "%s" when importing routing resource "%s".', $method, get_debug_type($loaderObject), $resource));
         }
 
-        $routeCollection = \call_user_func([$loaderObject, $method], $this);
+        $routeCollection = $loaderObject->$method($this, $this->env);
 
         if (!$routeCollection instanceof RouteCollection) {
-            $type = \is_object($routeCollection) ? \get_class($routeCollection) : \gettype($routeCollection);
+            $type = get_debug_type($routeCollection);
 
-            throw new \LogicException(sprintf('The "%s::%s()" method must return a RouteCollection: "%s" returned.', \get_class($loaderObject), $method, $type));
+            throw new \LogicException(sprintf('The "%s::%s()" method must return a RouteCollection: "%s" returned.', get_debug_type($loaderObject), $method, $type));
         }
 
-        // make the service file tracked so that if it changes, the cache rebuilds
+        // make the object file tracked so that if it changes, the cache rebuilds
         $this->addClassResource(new \ReflectionClass($loaderObject), $routeCollection);
 
         return $routeCollection;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function supports($resource, $type = null)
-    {
-        return 'service' === $type;
     }
 
     private function addClassResource(\ReflectionClass $class, RouteCollection $collection)

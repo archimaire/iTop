@@ -11,7 +11,7 @@
 
 namespace Symfony\Component\HttpKernel;
 
-use Symfony\Component\BrowserKit\Client as BaseClient;
+use Symfony\Component\BrowserKit\AbstractBrowser;
 use Symfony\Component\BrowserKit\CookieJar;
 use Symfony\Component\BrowserKit\History;
 use Symfony\Component\BrowserKit\Request as DomRequest;
@@ -21,23 +21,20 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Client simulates a browser and makes requests to a Kernel object.
+ * Simulates a browser and makes requests to an HttpKernel instance.
  *
  * @author Fabien Potencier <fabien@symfony.com>
  *
- * @method Request|null  getRequest()  A Request instance
- * @method Response|null getResponse() A Response instance
+ * @method Request  getRequest()
+ * @method Response getResponse()
  */
-class Client extends BaseClient
+class HttpKernelBrowser extends AbstractBrowser
 {
     protected $kernel;
     private $catchExceptions = true;
 
     /**
-     * @param HttpKernelInterface $kernel    An HttpKernel instance
-     * @param array               $server    The server parameters (equivalent of $_SERVER)
-     * @param History             $history   A History instance to store the browser history
-     * @param CookieJar           $cookieJar A CookieJar instance to store the cookies
+     * @param array $server The server parameters (equivalent of $_SERVER)
      */
     public function __construct(HttpKernelInterface $kernel, array $server = [], History $history = null, CookieJar $cookieJar = null)
     {
@@ -50,22 +47,22 @@ class Client extends BaseClient
 
     /**
      * Sets whether to catch exceptions when the kernel is handling a request.
-     *
-     * @param bool $catchExceptions Whether to catch exceptions
      */
-    public function catchExceptions($catchExceptions)
+    public function catchExceptions(bool $catchExceptions)
     {
         $this->catchExceptions = $catchExceptions;
     }
 
     /**
-     * Makes a request.
+     * {@inheritdoc}
      *
-     * @return Response A Response instance
+     * @param Request $request
+     *
+     * @return Response
      */
-    protected function doRequest($request)
+    protected function doRequest(object $request)
     {
-        $response = $this->kernel->handle($request, HttpKernelInterface::MASTER_REQUEST, $this->catchExceptions);
+        $response = $this->kernel->handle($request, HttpKernelInterface::MAIN_REQUEST, $this->catchExceptions);
 
         if ($this->kernel instanceof TerminableInterface) {
             $this->kernel->terminate($request, $response);
@@ -75,11 +72,13 @@ class Client extends BaseClient
     }
 
     /**
-     * Returns the script to execute when the request must be insulated.
+     * {@inheritdoc}
+     *
+     * @param Request $request
      *
      * @return string
      */
-    protected function getScript($request)
+    protected function getScript(object $request)
     {
         $kernel = var_export(serialize($this->kernel), true);
         $request = var_export(serialize($request), true);
@@ -90,7 +89,7 @@ class Client extends BaseClient
         foreach (get_declared_classes() as $class) {
             if (0 === strpos($class, 'ComposerAutoloaderInit')) {
                 $r = new \ReflectionClass($class);
-                $file = \dirname(\dirname($r->getFileName())).'/autoload.php';
+                $file = \dirname($r->getFileName(), 2).'/autoload.php';
                 if (file_exists($file)) {
                     $requires .= 'require_once '.var_export($file, true).";\n";
                 }
@@ -129,13 +128,16 @@ EOF;
     }
 
     /**
-     * Converts the BrowserKit request to a HttpKernel request.
+     * {@inheritdoc}
      *
-     * @return Request A Request instance
+     * @return Request
      */
     protected function filterRequest(DomRequest $request)
     {
-        $httpRequest = Request::create($request->getUri(), $request->getMethod(), $request->getParameters(), $request->getCookies(), $request->getFiles(), $request->getServer(), $request->getContent());
+        $httpRequest = Request::create($request->getUri(), $request->getMethod(), $request->getParameters(), $request->getCookies(), $request->getFiles(), $server = $request->getServer(), $request->getContent());
+        if (!isset($server['HTTP_ACCEPT'])) {
+            $httpRequest->headers->remove('Accept');
+        }
 
         foreach ($this->filterFiles($httpRequest->files->all()) as $key => $value) {
             $httpRequest->files->set($key, $value);
@@ -155,7 +157,7 @@ EOF;
      *
      * @see UploadedFile
      *
-     * @return array An array with all uploaded files marked as already moved
+     * @return array
      */
     protected function filterFiles(array $files)
     {
@@ -169,7 +171,6 @@ EOF;
                         '',
                         $value->getClientOriginalName(),
                         $value->getClientMimeType(),
-                        0,
                         \UPLOAD_ERR_INI_SIZE,
                         true
                     );
@@ -178,7 +179,6 @@ EOF;
                         $value->getPathname(),
                         $value->getClientOriginalName(),
                         $value->getClientMimeType(),
-                        $value->getClientSize(),
                         $value->getError(),
                         true
                     );
@@ -190,11 +190,13 @@ EOF;
     }
 
     /**
-     * Converts the HttpKernel response to a BrowserKit response.
+     * {@inheritdoc}
      *
-     * @return DomResponse A DomResponse instance
+     * @param Response $response
+     *
+     * @return DomResponse
      */
-    protected function filterResponse($response)
+    protected function filterResponse(object $response)
     {
         // this is needed to support StreamedResponse
         ob_start();
