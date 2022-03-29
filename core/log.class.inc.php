@@ -551,6 +551,11 @@ class LogChannels
 
 	const INLINE_IMAGE = 'InlineImage';
 
+	/**
+	 * @since 2.7.7
+	 */
+	const NOTIFICATION = 'Notification';
+
 	const PORTAL = 'portal';
 }
 
